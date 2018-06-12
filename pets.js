@@ -17,6 +17,15 @@
 // provides an API for interacting with file system
 let fs = require('fs');
 
+//return the whole object when the file is run
+// fs.readFile('pets.json', 'utf8', function (err, data) {
+//     if(err) {
+//         throw err;
+//     }
+//     console.log(data);
+// });
+
+
 // path module handles and transforms file modules
 let path = require('path');
 
@@ -27,13 +36,12 @@ let petsPath = path.join(__dirname, 'pets.json');
 let node = path.basename(process.argv[0]);
 let file = path.basename(process.argv[1]);
 let cmd = process.argv[2];
-let value = process.argv[3];
-let index = process.argv[3];
 
 let commands = ["create", "read", "update", "destroy"];
 
 if (commands.indexOf(cmd) == -1) {
-    console.log("entered invalid 3rd command")
+    console.error("Usage: node pets.js [read | create | update | destroy]")
+    process.exit(1);
 }
 else {
     if (cmd === 'read') {
@@ -42,12 +50,18 @@ else {
             throw err;
           }
           let pets = JSON.parse(data);
-          if (index) {
-              console.log(pets[index])
-              console.log(typeof pets[index].age)
-          }
-          else {
+          let index = process.argv[3];
+        //   console.log("Index is", index);
+          if (index == undefined) {
               console.log(pets);
+          } else {
+              if (pets[parseInt(index)]) {
+                console.log(pets[parseInt(index)])
+              } else {
+                console.error("Usage: node pets.js read INDEX");
+                process.exit(1);
+              }
+            
           }
         });
       }
@@ -75,17 +89,19 @@ else {
                     
                 }
                 else {
-                    console.log("Name is required. Command should be: node pets.js create AGE KIND NAME")
+                    console.error("Usage: node pets.js create AGE KIND NAME")
+                    process.exit(1);
                 }
             }
             else {
-                console.log("Kind is required. Command should be: node pets.js create AGE KIND NAME")
+                console.error("Usage: node pets.js create AGE KIND NAME")
+                process.exit(1);
             }
         }
         else {
-            console.log("Age requires a number. Command should be: node pets.js create INDEX AGE KIND NAME")
+            console.error("Usage: node pets.js create AGE KIND NAME")
+            process.exit(1);
         }
-        console.log(pets);
         });
       }
       if (cmd === 'update') {
@@ -114,19 +130,23 @@ else {
                     });
                     }
                     else {
-                        console.log("Name is required. Command should be: node pets.js update INDEX AGE KIND NAME")
+                        console.error("Usage: node pets.js update INDEX AGE KIND NAME")
+                        process.exit(1);
                     }
                 }
                 else {
-                    console.log("Kind is required. Command should be: node pets.js update INDEX AGE KIND NAME")
+                    console.error("Usage: node pets.js update INDEX AGE KIND NAME")
+                    process.exit(1);
                 }
             }
             else {
-                console.log("Age requires a number. Command should be: node pets.js update INDEX AGE KIND NAME")
+                console.error("Usage: node pets.js update INDEX AGE KIND NAME")
+                process.exit(1);
             }
           }
           else {
-              console.log("Unrecognized index value. Command should be: node pets.js update INDEX AGE KIND NAME")
+              console.error("Usage: node pets.js update INDEX AGE KIND NAME")
+              process.exit(1);
           }
             
         });
@@ -149,14 +169,13 @@ else {
                 });
             }
           else {
-              console.log("Unrecognized index value. Command should be: node pets.js update INDEX AGE KIND NAME")
+              console.error("Usage: node pets.js destroy INDEX")
+              process.exit(1);
           };
 
           });
         }
     };
-    
-
 
 
 
