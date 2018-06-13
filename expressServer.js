@@ -47,24 +47,38 @@ app.get('/pets', function(req, res) {
     });
   });
 
-  // app.post('/pets/:id', function(req, res) {
-  //   fs.readFile(petsPath, 'utf8', function(err, petsData){
-  //     if (err) {
-  //       console.error(err.stack);
-  //       return res.sendStatus(500);
-  //     }
+  app.post('/pets/:age/:kind/:name', function(req, res) {
+    fs.readFile(petsPath, 'utf8', function(err, petsData){
+      if (err) {
+        console.error(err.stack);
+        return res.sendStatus(500);
+      };
+
+      let age = Number.parseInt(req.params.age);
+      let kind = req.params.kind;
+      let name = req.params.name;
+
+      let newPet = {};
+      newPet.age = age; 
+      newPet.kind = kind;
+      newPet.name = name;
+
+      let pets = JSON.parse(petsData);
+      pets.push(newPet);
+
+      let newPetsJSON = JSON.stringify(pets);
+
+      fs.writeFile(petsPath, newPetsJSON, function(writeErr) {
+        if (writeErr) {
+        throw writeErr;
+        };
   
-  //     var id = Number.parseInt(req.params.id);
-  //     var pets = JSON.parse(petsData);
-  
-  //     if (id < 0 || id >= pets.length || Number.isNaN(id)) {
-  //       return res.sendStatus(404);
-  //     }
-  
-  //     res.set('Content-Type', 'application/json');
-  //     res.send(pets[id]);
-  //   });
-  // });
+      res.set('Content-Type', 'application/json');
+      res.send(pets);
+      });
+    });
+  });
+
 
   
   
